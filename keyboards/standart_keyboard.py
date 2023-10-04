@@ -29,12 +29,13 @@ start_kb: ReplyKeyboardMarkup = reg_signin_builder.as_markup(
 button_manger = KeyboardButton(text=LEXICON_RU['manager'])
 button_master = KeyboardButton(text=LEXICON_RU['master'])
 button_staff = KeyboardButton(text=LEXICON_RU['staff'])
+button_cancel = KeyboardButton(text=LEXICON_RU['/cancel'])
 
 # Инициализируем билдер для клавиатуры с кнопками регистрации uid
 reg_builder = ReplyKeyboardBuilder()
 
 # Добавляем кнопки в билдер с аргументом width=2
-reg_builder.row(button_manger, button_master, button_staff, width=2)
+reg_builder.row(button_manger, button_master, button_staff, button_cancel, width=2)
 
 # Создаем клавиатуру с кнопками "Регистрация" и "Вход"
 register_kb: ReplyKeyboardMarkup = reg_builder.as_markup(
