@@ -6,9 +6,12 @@ from aiogram.types import Message
 
 from lexicon.lexicon import LEXICON_RU
 from keyboards.standart_keyboard import start_kb, register_kb
-from fsm.fsm import FSMRegistration
+from fsm.fsm import FSMRegistration, FSMEntry
+
 from services.services import get_access
 from services.services import to_database
+
+from filters.filters import Validator
 
 # Инициализируем роутер уровня модуля
 router = Router()
@@ -50,6 +53,7 @@ async def process_input_name(message: Message, state: FSMContext):
     await message.answer(text=LEXICON_RU['input_name'], reply_markup=register_kb)
     # Сохраняем введенное имя в хранилище по ключу "name"
     await state.update_data(name=message.text)
+    await state.update_data(tg_id=message.from_user.id)
     # Устанавливаем состояние ожидания выбора роли
     await state.set_state(FSMRegistration.fill_role)
 
@@ -90,6 +94,20 @@ async def process_staff(message: Message, state: FSMContext):
 
 # ------------Ветка входа----------------
 # Этот хэндлер срабатывает на кнопку "Вход"
-@router.message(F.text == LEXICON_RU['sign_in'])
-async def choice_sign_in(message: Message):
+@router.message(F.text == LEXICON_RU['sign_in'], StateFilter(default_state))
+async def choice_sign_in(message: Message, state: FSMContext):
     await message.answer(text=LEXICON_RU['input_uid'])
+    await state.set_state(FSMEntry.fill_code)
+
+
+# Успешный вход
+@router.message(StateFilter(FSMEntry.fill_code), Validator())
+async def enter_code(message: Message, state: FSMContext):
+    await message.answer(text='Успешный вход')
+    await state.set_state(FSMEntry.successful_entry)
+
+
+# Неверный код доступа
+@router.message(StateFilter(FSMEntry.fill_code))
+async def enter_bad_code(message: Message):
+    await message.answer(text='Неверный код доступа')

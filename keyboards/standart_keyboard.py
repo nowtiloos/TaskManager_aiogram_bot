@@ -21,9 +21,9 @@ start_kb: ReplyKeyboardMarkup = reg_signin_builder.as_markup(
     resize_keyboard=True
 )
 
-# --------------------------------------------------
+# -----------------------------------------------------
 
-# ------- Создаем клавиатуру регистрации uid -------
+# ------- Создаем клавиатуру регистрации uid ----------
 
 # Создаем кнопки с ответами регистрации uid
 button_manger = KeyboardButton(text=LEXICON_RU['manager'])
@@ -43,6 +43,6 @@ register_kb: ReplyKeyboardMarkup = reg_builder.as_markup(
     resize_keyboard=True
 )
 
-# --------------------------------------------------
+
 
 

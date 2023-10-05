@@ -9,3 +9,7 @@ class FSMRegistration(StatesGroup):
     fill_name = State()  # Состояние ожидания ввода имени
     fill_role = State()  # Состояние ожидания ввода должности
 
+
+class FSMEntry(StatesGroup):
+    fill_code = State()
+    successful_entry = State()

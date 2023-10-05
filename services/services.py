@@ -23,9 +23,9 @@ def get_access(unit: str) -> str:
 # Функция забирает данные из Redis и передает их в БД
 async def to_database(message: Message, state: FSMContext, code: str):
     await message.answer(text=f'Ваш код доступа к базе: {code}')
-    await state.update_data(code=code)
     await state.update_data(role=LEXICON_RU['staff'])
     # Добавляем в "базу данных" анкету пользователя
     # по ключу id пользователя
-    user_dict[message.from_user.id] = await state.get_data()
+    user_dict[code] = await state.get_data()
+    print(user_dict)
     await state.clear()

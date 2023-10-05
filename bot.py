@@ -5,7 +5,7 @@ from aiogram import Bot, Dispatcher
 from aiogram.types import BotCommand
 from aiogram.fsm.storage.redis import RedisStorage, Redis
 from config_data.config import load_config
-from handlers import other_handlers, user_handlers
+from handlers import other_handlers, initial_handlers
 
 # Инициализируем логгер
 logger = logging.getLogger(__name__)
@@ -44,7 +44,7 @@ async def main() -> None:
     await bot.set_my_commands(main_menu_commands)
 
     # Регистриуем роутеры в диспетчере
-    dp.include_router(user_handlers.router)
+    dp.include_router(initial_handlers.router)
     dp.include_router(other_handlers.router)
 
     # Пропускаем накопившиеся апдейты и запускаем polling
