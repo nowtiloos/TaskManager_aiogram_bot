@@ -4,11 +4,11 @@ from aiogram.fsm.context import FSMContext
 from aiogram.fsm.state import default_state
 from aiogram.types import Message
 
-from databases.users_db import user_dict
 from lexicon.lexicon import LEXICON_RU
 from keyboards.standart_keyboard import start_kb, register_kb
-from services.access import get_access
 from fsm.fsm import FSMRegistration
+from services.services import get_access
+from services.services import to_database
 
 # Инициализируем роутер уровня модуля
 router = Router()
@@ -68,36 +68,24 @@ async def invalid_name(message: Message):
 @router.message(StateFilter(FSMRegistration.fill_role), F.text == LEXICON_RU['manager'])
 async def process_manager(message: Message, state: FSMContext):
     code = get_access('manager')
-    await message.answer(text=f'Ваш код доступа к базе: {code}')
-    await state.update_data(code=code)
-    # Добавляем в "базу данных" анкету пользователя
-    # по ключу id пользователя
-    user_dict[message.from_user.id] = await state.get_data()
-    await state.clear()
+    # Передает данные в БД
+    await to_database(message, state, code)
 
 
 # Этот хэндлер срабатывает на кнопку "Мастер рем-зоны"
 @router.message(StateFilter(FSMRegistration.fill_role), F.text == LEXICON_RU['master'])
 async def process_master(message: Message, state: FSMContext):
     code = get_access('master')
-    await message.answer(text=f'Ваш код доступа к базе: {code}')
-    await state.update_data(code=code)
-    # Добавляем в "базу данных" анкету пользователя
-    # по ключу id пользователя
-    user_dict[message.from_user.id] = await state.get_data()
-    await state.clear()
+    # Передает данные в БД
+    await to_database(message, state, code)
 
 
 # Этот хэндлер срабатывает на кнопку "Сотрудник"
 @router.message(StateFilter(FSMRegistration.fill_role), F.text == LEXICON_RU['staff'])
 async def process_staff(message: Message, state: FSMContext):
     code = get_access('staff')
-    await message.answer(text=f'Ваш код доступа к базе: {code}')
-    await state.update_data(code=code)
-    # Добавляем в "базу данных" анкету пользователя
-    # по ключу id пользователя
-    user_dict[message.from_user.id] = await state.get_data()
-    await state.clear()
+    # Передает данные в БД
+    await to_database(message, state, code)
 
 
 # ------------Ветка входа----------------
