@@ -2,10 +2,24 @@ import asyncio
 import logging
 
 from aiogram import Bot, Dispatcher
-from aiogram.types import BotCommand
+
 from aiogram.fsm.storage.redis import RedisStorage, Redis
 from config_data.config import load_config
-from handlers import other_handlers, initial_handlers
+from handlers import other_handlers, initial_handlers, workspace_handlers
+from keyboards.main_menu import set_main_menu
+
+# Инициализируем Redis
+redis = Redis(host='localhost')
+
+# Инициализируем хранилище (создаем экземпляр класса MemoryStorage)
+storage = RedisStorage(redis=redis)
+
+# Загружаем конфиг
+config = load_config('.env')
+
+# Создаем объекты бота и диспетчера
+bot = Bot(token=config.tg_bot.token, parse_mode='HTML')
+dp = Dispatcher(storage=storage)
 
 # Инициализируем логгер
 logger = logging.getLogger(__name__)
@@ -22,29 +36,12 @@ async def main() -> None:
     # Выводим в консоль информацию о начале запуска бота
     logger.info('Starting bot')
 
-    # Инициализируем Redis
-    redis = Redis(host='localhost')
-
-    # Инициализируем хранилище (создаем экземпляр класса MemoryStorage)
-    storage = RedisStorage(redis=redis)
-
-    # Загружаем конфиг
-    config = load_config('.env')
-
-    # Создаем объекты бота и диспетчера
-    bot = Bot(token=config.tg_bot.token, parse_mode='HTML')
-    dp = Dispatcher(storage=storage)
-
     # Создаем список с командами и их описанием для кнопки menu
-    main_menu_commands = [
-        BotCommand(command='/help',
-                   description='Справка по работе бота')
-    ]
-
-    await bot.set_my_commands(main_menu_commands)
+    await set_main_menu(bot)
 
     # Регистриуем роутеры в диспетчере
     dp.include_router(initial_handlers.router)
+    dp.include_router(workspace_handlers.router)
     dp.include_router(other_handlers.router)
 
     # Пропускаем накопившиеся апдейты и запускаем polling

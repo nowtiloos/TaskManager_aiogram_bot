@@ -4,17 +4,19 @@ from aiogram.fsm.context import FSMContext
 from aiogram.fsm.state import default_state
 from aiogram.types import Message
 
+from keyboards.inline_keyboard import buttons, name_button, create_inline_kb
 from lexicon.lexicon import LEXICON_RU
 from keyboards.standart_keyboard import start_kb, register_kb
 from fsm.fsm import FSMRegistration, FSMEntry
 
-from services.services import get_access
-from services.services import to_database
+from services.services import get_access, to_database
 
 from filters.filters import Validator
 
 # Инициализируем роутер уровня модуля
 router = Router()
+# Хэндлеры работают до тех пор, пока не выполнен вход
+router.message.filter(~StateFilter(FSMEntry.successful_entry))
 
 
 # Этот хэндлер срабатывает на команду /start
@@ -34,7 +36,7 @@ async def process_cancel_command(message: Message):
 # кроме состояния по умолчанию, и отключать машину состояний
 @router.message(Command(commands='cancel'), ~StateFilter(default_state))
 async def process_cancel_command_state(message: Message, state: FSMContext):
-    await message.answer(text='Команда отменена')
+    await message.answer(text='Команда отменена', reply_markup=start_kb)
     # Сбрасываем состояние и очищаем данные, полученные внутри состояний
     await state.clear()
 
@@ -103,11 +105,12 @@ async def choice_sign_in(message: Message, state: FSMContext):
 # Успешный вход
 @router.message(StateFilter(FSMEntry.fill_code), Validator())
 async def enter_code(message: Message, state: FSMContext):
-    await message.answer(text='Успешный вход')
+    keyboard = create_inline_kb(2, 'button', 'cott', 'sdf')
+    await message.answer(text=LEXICON_RU['welcome'], reply_markup=keyboard)
     await state.set_state(FSMEntry.successful_entry)
 
 
 # Неверный код доступа
 @router.message(StateFilter(FSMEntry.fill_code))
 async def enter_bad_code(message: Message):
-    await message.answer(text='Неверный код доступа')
+    await message.answer(text=LEXICON_RU['invalid_code'])

@@ -1,9 +1,12 @@
 import uuid
 
+
 from aiogram.fsm.context import FSMContext
 from aiogram.types import Message
 
 from databases.users_db import user_dict
+
+from keyboards.standart_keyboard import start_kb
 from lexicon.lexicon import LEXICON_RU
 
 
@@ -27,5 +30,5 @@ async def to_database(message: Message, state: FSMContext, code: str):
     # Добавляем в "базу данных" анкету пользователя
     # по ключу id пользователя
     user_dict[code] = await state.get_data()
-    print(user_dict)
     await state.clear()
+    await message.answer(text=LEXICON_RU['final_reg'], reply_markup=start_kb)
