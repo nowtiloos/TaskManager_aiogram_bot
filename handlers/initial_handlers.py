@@ -9,8 +9,7 @@ from lexicon.lexicon import LEXICON_RU
 from keyboards.standart_keyboard import start_kb, register_kb
 from fsm.fsm import FSMRegistration, FSMEntry
 from services.services import get_access, to_database, multi_delete
-from filters.filters import Validator
-
+from filters.filters import ValidatorCode, ValidatorName
 
 # Инициализируем роутер уровня модуля
 router = Router()
@@ -52,7 +51,7 @@ async def process_register(message: Message, state: FSMContext):
 
 
 # Этот хэндлер срабатывает на ввод фамилии и инициалов
-@router.message(StateFilter(FSMRegistration.fill_name), F.text.isalpha())
+@router.message(StateFilter(FSMRegistration.fill_name), ValidatorName())
 async def process_input_name(message: Message, state: FSMContext):
     await multi_delete(message, 2)
     await message.answer(text=LEXICON_RU['input_name'], reply_markup=register_kb)
@@ -110,7 +109,7 @@ async def choice_sign_in(message: Message, state: FSMContext):
 
 
 # Успешный вход
-@router.message(StateFilter(FSMEntry.fill_code), Validator())
+@router.message(StateFilter(FSMEntry.fill_code), ValidatorCode())
 async def enter_code(message: Message, state: FSMContext):
     await multi_delete(message, 2)
     keyboard = create_inline_kb(2, 'button', 'cott', 'sdf', last_btn='quit')

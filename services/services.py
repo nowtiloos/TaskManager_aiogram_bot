@@ -9,11 +9,11 @@ from aiogram.types import Message
 
 from keyboards.standart_keyboard import start_kb
 from lexicon.lexicon import LEXICON_RU
-from services.db import insert_data_from_dict
+from services.db_interface import insert_data_from_dict
 
 
 # Функция генерации ключа доступа к базе задач
-def get_access(unit: str) -> str:
+def get_access(unit: str) -> str | None:
     code = None
     match unit:
         case 'manager':

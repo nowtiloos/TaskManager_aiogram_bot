@@ -1,4 +1,4 @@
-from aiogram import Router, Bot
+from aiogram import Router
 from aiogram.filters import StateFilter, CommandStart
 from aiogram.types import CallbackQuery, Message
 from aiogram import F

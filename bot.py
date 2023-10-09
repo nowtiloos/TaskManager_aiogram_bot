@@ -7,7 +7,7 @@ from aiogram.fsm.storage.redis import RedisStorage, Redis
 from config_data.config import load_config
 from handlers import other_handlers, initial_handlers, workspace_handlers
 from keyboards.main_menu import set_main_menu
-import services.db
+import services.db_interface
 
 # Инициализируем Redis
 redis = Redis(host='localhost')
