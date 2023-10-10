@@ -24,6 +24,7 @@ async def process_help_command(message: Message):
     await message.answer(text=LEXICON_RU['/help'])
 
 
+# временно<<<<<
 @router.message(Command(commands='clear_db_users'))
 async def process_help_command(message: Message):
     await message.answer(text='Users table clear')

@@ -4,7 +4,7 @@ from aiogram.fsm.context import FSMContext
 from aiogram.fsm.state import default_state
 from aiogram.types import Message
 
-from keyboards.inline_keyboard import buttons, name_button, create_inline_kb
+from keyboards.inline_keyboard import keyboard
 from lexicon.lexicon import LEXICON_RU
 from keyboards.standart_keyboard import start_kb, register_kb
 from fsm.fsm import FSMRegistration, FSMEntry
@@ -112,7 +112,6 @@ async def choice_sign_in(message: Message, state: FSMContext):
 @router.message(StateFilter(FSMEntry.fill_code), ValidatorCode())
 async def enter_code(message: Message, state: FSMContext):
     await multi_delete(message, 2)
-    keyboard = create_inline_kb(2, 'button', 'cott', 'sdf', last_btn='quit')
     await message.answer(text=LEXICON_RU['welcome'], reply_markup=keyboard)
     await state.set_state(FSMEntry.successful_entry)
 

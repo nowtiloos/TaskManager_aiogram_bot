@@ -1,15 +1,15 @@
 import sqlite3
 
-conn = sqlite3.connect('databases/users_db.db')
+conn = sqlite3.connect('databases/database.db')
 cursor = conn.cursor()
 
 
 def insert_data_from_dict(data_dict: dict) -> None:
     """Заносит данные о новом пользователе в таблицу users"""
     try:
-        cursor.execute("INSERT INTO users (code, name, tg_id, role) "
+        cursor.execute("INSERT INTO users (tg_id, code, name, role) "
                        "VALUES (?, ?, ?, ?)",
-                       (data_dict.get('code'), data_dict.get('name'), data_dict.get('tg_id'), data_dict.get('role')))
+                       (data_dict.get('tg_id'), data_dict.get('code'), data_dict.get('name'), data_dict.get('role')))
 
         conn.commit()
         print("New user add to table")
@@ -36,6 +36,19 @@ async def clear_users_table():
         print("Таблица 'users' успешно очищена.")
     except sqlite3.Error as e:
         print("Ошибка при очистке таблицы:", e)
+
+
+def insert_task(data_dict: dict) -> None:
+    """Заносит данные о задаче в таблицу tasks"""
+    try:
+        cursor.execute("INSERT INTO tasks (user_tg_id, due_date, task_text) "
+                       "VALUES (?, ?, ?)",
+                       (data_dict.get('tg_id'), data_dict.get('code'), data_dict.get('name'), data_dict.get('role')))
+
+        conn.commit()
+        print("New user add to table")
+    except sqlite3.Error as e:
+        print("Add error:", e)
 
 
 def _init_db() -> None:
