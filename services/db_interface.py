@@ -17,11 +17,11 @@ def insert_data_from_dict(data_dict: dict) -> None:
         print("Add error:", e)
 
 
-def fetch_codes() -> list[str] | None:
+def fetch_users_db(arg: str) -> list[str] | None:
     """Выводит список выданных кодов доступа"""
     try:
-        cursor.execute("SELECT code FROM users")
-        rows = [code for rows in cursor.fetchall() for code in rows]
+        cursor.execute(f'SELECT {arg} FROM users')
+        rows = [arg for rows in cursor.fetchall() for arg in rows]
         return rows
     except sqlite3.Error as e:
         print("Ошибка при извлечении данных:", e)

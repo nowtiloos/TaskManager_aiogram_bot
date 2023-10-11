@@ -13,3 +13,8 @@ class FSMRegistration(StatesGroup):
 class FSMEntry(StatesGroup):
     fill_code = State()
     successful_entry = State()
+
+
+class FSMCreateTask(StatesGroup):
+    fill_date = State()
+    fill_task = State()
