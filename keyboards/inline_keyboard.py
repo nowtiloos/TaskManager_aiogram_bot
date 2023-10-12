@@ -1,41 +1,60 @@
 import calendar
 from datetime import datetime
 
-from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup, Message
+from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
 from aiogram.utils.keyboard import InlineKeyboardBuilder
 
-from lexicon.lexicon import LEXICON_WORKSPACE
+from lexicon.lexicon import LEXICON_WORKSPACE, LEXICON_RU
 
 
+# Функция для формирования инлайн-клавиатуры на лету
+def create_inline_kb(
+        *args: str,
+        width: int = 2,
+        **kwargs: str) -> InlineKeyboardMarkup:
+    # Инициализируем билдер
+    kb_builder = InlineKeyboardBuilder()
+    # Инициализируем список для кнопок
+    buttons: list[InlineKeyboardButton] = []
 
-# Создаем объекты инлайн-кнопок
-show_tasks_today = InlineKeyboardButton(
-    text=LEXICON_WORKSPACE['show_tasks_today'],
-    callback_data='show_tasks_today_pressed')
+    # Заполняем список кнопками из аргументов args и kwargs
+    if args:
+        for button in args:
+            buttons.append(InlineKeyboardButton(
+                text=LEXICON_RU[button] if button in LEXICON_RU else button,
+                callback_data=button))
+    if kwargs:
+        for button, text in kwargs.items():
+            buttons.append(InlineKeyboardButton(
+                text=text,
+                callback_data=button))
 
-show_tasks_for_week = InlineKeyboardButton(
-    text=LEXICON_WORKSPACE['show_tasks_for_week'],
-    callback_data='show_tasks_for_week_pressed')
+    # Распаковываем список с кнопками в билдер методом row c параметром width
+    kb_builder.row(*buttons, width=width)
 
-show_all_tasks = InlineKeyboardButton(
-    text=LEXICON_WORKSPACE['show_all_tasks'],
-    callback_data='show_all_tasks_pressed')
+    # Возвращаем объект инлайн-клавиатуры
+    return kb_builder.as_markup()
 
-add_task = InlineKeyboardButton(
-    text=LEXICON_WORKSPACE['add_task'],
-    callback_data='add_task_pressed')
 
 # Создаем объект инлайн-клавиатуры
-keyboard = InlineKeyboardMarkup(
+keyboard: InlineKeyboardMarkup = InlineKeyboardMarkup(
     inline_keyboard=[
-        [add_task],
-        [show_tasks_today],
-        [show_tasks_for_week],
-        [show_all_tasks]
+        [InlineKeyboardButton(
+            text=LEXICON_WORKSPACE['show_tasks_today'],
+            callback_data='show_tasks_today_pressed')],
+        [InlineKeyboardButton(
+            text=LEXICON_WORKSPACE['show_tasks_for_week'],
+            callback_data='show_tasks_for_week_pressed')],
+        [InlineKeyboardButton(
+            text=LEXICON_WORKSPACE['show_all_tasks'],
+            callback_data='show_all_tasks_pressed')],
+        [InlineKeyboardButton(
+            text=LEXICON_WORKSPACE['add_task'],
+            callback_data='add_task_pressed')]
     ])
 
 
-def day_markup():
+def day_kb() -> InlineKeyboardMarkup:
     markup = InlineKeyboardBuilder()
 
     # Получаем текущую дату

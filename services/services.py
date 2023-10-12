@@ -5,11 +5,11 @@ from aiogram.exceptions import TelegramBadRequest
 from bot import bot
 
 from aiogram.fsm.context import FSMContext
-from aiogram.types import Message
+from aiogram.types import Message, CallbackQuery
 
-from keyboards.standart_keyboard import start_kb
+from keyboards.inline_keyboard import create_inline_kb
 from lexicon.lexicon import LEXICON_RU
-from services.db_interface import insert_data_from_dict
+from services.db_interface import insert
 
 
 # Функция генерации ключа доступа к базе задач
@@ -26,14 +26,15 @@ def get_access(unit: str) -> str | None:
 
 
 # Функция забирает данные из Redis и передает их в БД
-async def to_database(message: Message, state: FSMContext, code: str):
-    await message.answer(text=f'Ваш код доступа к базе: {code}')
+async def to_user_database(callback: CallbackQuery, state: FSMContext, code: str):
+    await callback.message.edit_text(text=f'Ваш код доступа к базе: {code}')
     await state.update_data(role=LEXICON_RU['staff'])
     await state.update_data(code=code)
     # Добавляем в "базу данных" анкету пользователя
-    insert_data_from_dict(await state.get_data())
+    insert(table='users', data_dict=await state.get_data())
     await state.clear()
-    await message.answer(text=LEXICON_RU['final_reg'], reply_markup=start_kb)
+    markup = create_inline_kb('register', 'sign_in')
+    await callback.message.answer(text=LEXICON_RU['final_reg'], reply_markup=markup)
 
 
 async def multi_delete(message: Message, count: int = 1):

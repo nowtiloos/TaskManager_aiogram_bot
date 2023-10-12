@@ -5,16 +5,16 @@ from aiogram.fsm.state import default_state
 
 from aiogram.types import Message
 from lexicon.lexicon import LEXICON_RU
-from services.db_interface import clear_users_table
+from services.db_interface import clear_users_table, update_auth
 
 # Инициализируем роутер уровня модуля
 router = Router()
 
 
-@router.message(Command(commands='quit'), ~StateFilter(default_state))
+@router.message(Command(commands='quit'))
 async def process_cancel_command_state(message: Message, state: FSMContext):
     await message.answer(text='quitting')
-    # Сбрасываем состояние и очищаем данные, полученные внутри состояний
+    await update_auth(tg_id=message.from_user.id, value=0)
     await state.clear()
 
 

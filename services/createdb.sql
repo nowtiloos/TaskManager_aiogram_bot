@@ -3,7 +3,8 @@ CREATE TABLE IF NOT EXISTS users
     tg_id INTEGER PRIMARY KEY,
     code  VARCHAR(32),
     name  VARCHAR(30),
-    role  VARCHAR(15)
+    role  VARCHAR(15),
+    auth  INTEGER CHECK (auth IN (0, 1)) DEFAULT 0
 );
 
 CREATE TABLE IF NOT EXISTS tasks

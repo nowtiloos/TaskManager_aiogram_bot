@@ -2,7 +2,7 @@ import re
 
 from aiogram.filters import BaseFilter
 from aiogram.types import Message
-from services.db_interface import fetch_users_db
+from services.db_interface import fetch_users_db, auth_status
 
 
 # Фильтр проверки на верный код доступа к базе
@@ -14,12 +14,12 @@ class ValidatorCode(BaseFilter):
         return message.text in self.codes
 
 
-class ValidatorID(BaseFilter):
+class Authorized(BaseFilter):
     def __init__(self) -> None:
-        self.ids = fetch_users_db('tg_id')
+        self.auth = auth_status
 
     async def __call__(self, message: Message) -> bool:
-        return int(message.from_user.id) in self.ids
+        return self.auth(message.from_user.id)
 
 
 class ValidatorName(BaseFilter):
