@@ -1,11 +1,10 @@
 from aiogram import Router
-from aiogram.filters import Command, StateFilter
+from aiogram.filters import Command
 from aiogram.fsm.context import FSMContext
-from aiogram.fsm.state import default_state
 
 from aiogram.types import Message
 from lexicon.lexicon import LEXICON_RU
-from services.db_interface import clear_users_table, update_auth
+from services.db_interface import update_auth
 
 # Инициализируем роутер уровня модуля
 router = Router()
@@ -22,13 +21,6 @@ async def process_cancel_command_state(message: Message, state: FSMContext):
 @router.message(Command(commands='help'))
 async def process_help_command(message: Message):
     await message.answer(text=LEXICON_RU['/help'])
-
-
-# временно<<<<<
-@router.message(Command(commands='clear_db_users'))
-async def process_help_command(message: Message):
-    await message.answer(text='Users table clear')
-    await clear_users_table()
 
 
 # Хэндлер для сообщений, которые не попали в другие хэндлеры

@@ -89,7 +89,7 @@ async def process_master(callback: CallbackQuery, state: FSMContext):
 
 
 # Этот хэндлер срабатывает на кнопку "Сотрудник"
-@router.message(StateFilter(FSMRegistration.fill_role), F.data == 'staff')
+@router.callback_query(StateFilter(FSMRegistration.fill_role), F.data == 'staff')
 async def process_staff(callback: CallbackQuery, state: FSMContext):
     code = get_access('staff')
     # Передает данные в БД

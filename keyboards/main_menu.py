@@ -12,6 +12,9 @@ async def set_main_menu(bot: Bot):
         BotCommand(command='/help',
                    description=LEXICON_RU['/help']),
         BotCommand(command='/quit',
-                   description=LEXICON_RU['/quit'])
+                   description=LEXICON_RU['/quit']),
+        BotCommand(command='/clear_users',
+                   description='clear users table')
+
     ]
     await bot.set_my_commands(main_menu_commands)
