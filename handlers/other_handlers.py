@@ -3,7 +3,7 @@ from aiogram.filters import Command
 from aiogram.fsm.context import FSMContext
 
 from aiogram.types import Message
-from lexicon.lexicon import LEXICON_RU
+from lexicon import lexicon
 from services.db_interface import update_auth
 
 # Инициализируем роутер уровня модуля
@@ -20,10 +20,10 @@ async def process_cancel_command_state(message: Message, state: FSMContext):
 # Этот хэндлер срабатывает на команду /help
 @router.message(Command(commands='help'))
 async def process_help_command(message: Message):
-    await message.answer(text=LEXICON_RU['/help'])
+    await message.answer(text=lexicon['/help'])
 
 
 # Хэндлер для сообщений, которые не попали в другие хэндлеры
 @router.message()
 async def send_answer(message: Message):
-    await message.answer(text=LEXICON_RU['other_answer'])
+    await message.answer(text=lexicon['other_answer'])

@@ -3,7 +3,7 @@ from aiogram.filters import Command
 from aiogram.types import Message
 
 from services.db_interface import clear_table
-from filters.filters import IsAdmin
+from filters import IsAdmin
 
 router = Router()
 router.message.filter(IsAdmin())

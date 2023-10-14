@@ -1,4 +1,4 @@
-LEXICON_RU: dict[str, str] = {
+lexicon: dict[str, str] = {
     '/start': 'Добро пожаловать в менеджер задач',
     '/help': 'Здесь будет раздел помощи',
     '/cancel': 'Cancel',
@@ -15,15 +15,13 @@ LEXICON_RU: dict[str, str] = {
     'staff': 'Сотрудник',
     'invalid_code': 'Неверный код доступа, для отмены введите /cancel',
     'final_reg': 'Нажмите кнопку "Вход" и введите Ваш код доступа данный вам при регистрации',
-    'welcome': 'Вы вошли в менеджер задач'
-}
-
-LEXICON_WORKSPACE: dict[str, str] = {
+    'welcome': 'Вы вошли в менеджер задач',
     'show_tasks_today': 'Показать на сегодня',
     'add_task': 'Добавить задачу',
     'show_tasks_for_week': 'Показать задачи на текущей неделе',
     'show_all_tasks': 'Показать задачи за все время',
     'select_date': 'Выберите день месяца',
-    'write_task_text': 'Введите текст задачи',
-    'task_added': 'Задача добавлена'
+    'write_task_text': 'Введите текст задачи /abort',
+    'task_added': 'Задача добавлена',
+    '/abort': 'Отмена'
 }

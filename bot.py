@@ -2,9 +2,9 @@ import asyncio
 import logging
 
 from aiogram import Bot, Dispatcher
-
 from aiogram.fsm.storage.redis import RedisStorage, Redis
-from config_data.config import config
+
+from config_data import config
 from handlers import other_handlers, initial_handlers, workspace_handlers, admin_handlers
 from keyboards.main_menu import set_main_menu
 

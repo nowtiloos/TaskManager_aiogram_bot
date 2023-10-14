@@ -5,11 +5,11 @@ from aiogram.fsm.state import default_state
 from aiogram.types import Message, CallbackQuery
 
 from keyboards.inline_keyboard import keyboard, create_inline_kb
-from lexicon.lexicon import LEXICON_RU
-from fsm.fsm import FSMRegistration, FSMEntry
-from services.db_interface import insert, update_auth
+from lexicon import lexicon
+from fsm import FSMRegistration, FSMEntry
+from services.db_interface import update_auth
 from services.services import get_access, to_user_database, multi_delete
-from filters.filters import ValidatorCode, ValidatorName
+from filters import ValidatorCode, ValidatorName
 
 # Инициализируем роутер уровня модуля
 router = Router()
@@ -20,21 +20,21 @@ router = Router()
 async def process_start_command(message: Message):
     await multi_delete(message)
     markup = create_inline_kb('register', 'sign_in')
-    await message.answer(text=LEXICON_RU['/start'], reply_markup=markup)
+    await message.answer(text=lexicon['/start'], reply_markup=markup)
 
 
 # Этот хэндлер будет срабатывать на команду "/cancel" в состоянии
 # по умолчанию и сообщать, что эта команда работает внутри машины состояний
 @router.message(Command(commands='cancel'), StateFilter(default_state))
 async def process_cancel_command(message: Message):
-    await message.answer(text='Отменять нечего.')
+    await message.answer(text='Нет запущенных процессов')
 
 
 # Этот хэндлер будет срабатывать на команду "/cancel" в любых состояниях,
 # кроме состояния по умолчанию, и отключать машину состояний
 @router.message(Command(commands='cancel'), ~StateFilter(default_state))
 async def process_cancel_command_state(message: Message, state: FSMContext):
-    await multi_delete(message)
+    await multi_delete(message, 2)
     await message.answer(text='Команда отменена')
     # Сбрасываем состояние и очищаем данные, полученные внутри состояний
     await state.clear()
@@ -44,7 +44,7 @@ async def process_cancel_command_state(message: Message, state: FSMContext):
 @router.callback_query(F.data == 'register', StateFilter(default_state))
 async def process_register(callback: CallbackQuery, state: FSMContext):
     await callback.message.edit_text(
-        text=LEXICON_RU['input_reg'])
+        text=lexicon['input_reg'])
     # Устанавливаем состояние ожидания выбора фамилии
     await state.set_state(FSMRegistration.fill_name)
 
@@ -54,7 +54,7 @@ async def process_register(callback: CallbackQuery, state: FSMContext):
 async def process_input_name(message: Message, state: FSMContext):
     await multi_delete(message, 2)
     markup = create_inline_kb('manager', 'master', 'staff', '/cancel')
-    await message.answer(text=LEXICON_RU['input_name'], reply_markup=markup)
+    await message.answer(text=lexicon['input_name'], reply_markup=markup)
     # Сохраняем введенное имя в хранилище по ключу "name"
     await state.update_data(name=message.text)
     await state.update_data(tg_id=message.from_user.id)
@@ -72,26 +72,9 @@ async def invalid_name(message: Message):
              'отправьте команду /cancel')
 
 
-# Этот хэндлер срабатывает на кнопку "Мастер-приемщик"
-@router.callback_query(StateFilter(FSMRegistration.fill_role), F.data == 'manager')
-async def process_manager(callback: CallbackQuery, state: FSMContext):
-    code = get_access('manager')
-    # Передает данные в БД
-    await to_user_database(callback, state, code)
-
-
-# Этот хэндлер срабатывает на кнопку "Мастер рем-зоны"
-@router.callback_query(StateFilter(FSMRegistration.fill_role), F.data == 'master')
-async def process_master(callback: CallbackQuery, state: FSMContext):
-    code = get_access('master')
-    # Передает данные в БД
-    await to_user_database(callback, state, code)
-
-
-# Этот хэндлер срабатывает на кнопку "Сотрудник"
-@router.callback_query(StateFilter(FSMRegistration.fill_role), F.data == 'staff')
-async def process_staff(callback: CallbackQuery, state: FSMContext):
-    code = get_access('staff')
+@router.callback_query(StateFilter(FSMRegistration.fill_role))
+async def process_get_role(callback: CallbackQuery, state: FSMContext):
+    code = get_access(callback.data)
     # Передает данные в БД
     await to_user_database(callback, state, code)
 
@@ -102,20 +85,20 @@ async def process_staff(callback: CallbackQuery, state: FSMContext):
 async def choice_sign_in(callback: CallbackQuery, state: FSMContext):
     await callback.message.delete_reply_markup()
     await multi_delete(callback.message, 2)
-    await callback.message.answer(text=LEXICON_RU['input_uid'])
+    await callback.message.answer(text=lexicon['input_uid'])
     await state.set_state(FSMEntry.fill_code)
 
 
 # Успешный вход
 @router.message(StateFilter(FSMEntry.fill_code), ValidatorCode())
 async def enter_code(message: Message, state: FSMContext):
-    await multi_delete(message, 2)
+    await multi_delete(message, 10)
     await update_auth(tg_id=message.from_user.id, value=1)
-    await message.answer(text=LEXICON_RU['welcome'], reply_markup=keyboard)
+    await message.answer(text=lexicon['welcome'], reply_markup=keyboard)
     await state.set_state(FSMEntry.successful_entry)
 
 
 # Неверный код доступа
 @router.message(StateFilter(FSMEntry.fill_code))
 async def enter_bad_code(message: Message):
-    await message.answer(text=LEXICON_RU['invalid_code'])
+    await message.answer(text=lexicon['invalid_code'])
