@@ -63,7 +63,11 @@ async def select_task(message: Message, state: FSMContext):
     await state.clear()
 
 
-# Этот хэндлер будет срабатывать на апдейт типа CallbackQuery
+# Запрос задач на текущий день
 @router.callback_query(F.data == 'show_tasks_today_pressed')
 async def process_show_tasks_today_press(callback: CallbackQuery):
+    from services.services import get_table
     await callback.message.answer(text='Список задач на сегодня')
+    table = get_table()
+    # форматируем markdown
+    await callback.message.answer(text=f'```{table}```', parse_mode='MarkdownV2')

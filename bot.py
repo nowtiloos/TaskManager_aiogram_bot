@@ -15,7 +15,7 @@ redis = Redis(host='localhost')
 storage = RedisStorage(redis=redis)
 
 # Создаем объекты бота и диспетчера
-bot = Bot(token=config.tg_bot.token, parse_mode='HTML')
+bot = Bot(token=config.tg_bot.token)
 dp = Dispatcher(storage=storage)
 
 # Инициализируем логгер

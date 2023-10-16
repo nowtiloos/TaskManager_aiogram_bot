@@ -40,6 +40,9 @@ def create_inline_kb(
 keyboard: InlineKeyboardMarkup = InlineKeyboardMarkup(
     inline_keyboard=[
         [InlineKeyboardButton(
+            text=lexicon['add_task'],
+            callback_data='add_task_pressed')],
+        [InlineKeyboardButton(
             text=lexicon['show_tasks_today'],
             callback_data='show_tasks_today_pressed')],
         [InlineKeyboardButton(
@@ -47,10 +50,7 @@ keyboard: InlineKeyboardMarkup = InlineKeyboardMarkup(
             callback_data='show_tasks_for_week_pressed')],
         [InlineKeyboardButton(
             text=lexicon['show_all_tasks'],
-            callback_data='show_all_tasks_pressed')],
-        [InlineKeyboardButton(
-            text=lexicon['add_task'],
-            callback_data='add_task_pressed')]
+            callback_data='show_all_tasks_pressed')]
     ])
 
 
@@ -64,7 +64,7 @@ def days_keyboard() -> InlineKeyboardMarkup:
     current_month = today.month
     current_year = today.year
 
-    # Создаем клавиатуру с 14 днями, начиная с текущей даты
+    # Создаем клавиатуру с 21 днём, начиная с текущей даты
     for _ in range(21):
         if current_day > 0:
             # Получаем количество дней в текущем месяце

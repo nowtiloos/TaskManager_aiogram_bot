@@ -1,4 +1,5 @@
 import uuid
+from tabulate import tabulate
 
 from aiogram.exceptions import TelegramBadRequest
 from aiogram.fsm.context import FSMContext
@@ -7,7 +8,7 @@ from aiogram.types import Message, CallbackQuery
 from bot import bot
 from keyboards.inline_keyboard import create_inline_kb
 from lexicon import lexicon
-from services.db_interface import insert
+from db_interface import insert, query_database
 
 
 # Функция генерации ключа доступа к базе задач
@@ -25,7 +26,7 @@ def get_access(unit: str) -> str | None:
 
 # Функция забирает данные из Redis и передает их в БД
 async def to_user_database(callback: CallbackQuery, state: FSMContext, code: str):
-    await callback.message.edit_text(text=f'Ваш код доступа к базе: {code}')
+    await callback.message.edit_text(text=f'{lexicon["your_code_is"]}\n`{code}`', parse_mode='MarkdownV2')
     await state.update_data(role=lexicon[callback.data])
     await state.update_data(code=code)
     insert(table='users', data_dict=await state.get_data())
@@ -43,3 +44,10 @@ async def multi_delete(message: Message, count: int = 1):
         # код ошибки будет "Bad Request: message to delete not found"
         if ex.message == "Bad Request: message to delete not found":
             print("Все сообщения удалены")
+
+
+def get_table():
+    query = query_database(table='tasks', columns=('task_id', 'task_text'))
+    headers = ['id', 'text']
+    table = tabulate(query, headers, tablefmt='grid')
+    return table

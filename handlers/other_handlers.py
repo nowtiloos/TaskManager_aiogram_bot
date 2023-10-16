@@ -22,8 +22,8 @@ async def process_cancel_command_state(message: Message, state: FSMContext):
 async def process_help_command(message: Message):
     await message.answer(text=lexicon['/help'])
 
-
-# Хэндлер для сообщений, которые не попали в другие хэндлеры
-@router.message()
-async def send_answer(message: Message):
-    await message.answer(text=lexicon['other_answer'])
+#
+# # Хэндлер для сообщений, которые не попали в другие хэндлеры
+# @router.message()
+# async def send_answer(message: Message):
+#     await message.answer(text=lexicon['other_answer'])
