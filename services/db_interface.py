@@ -45,6 +45,18 @@ async def clear_table(table: str, condition=None) -> None:
         print('Ошибка при очистке таблицы:', e)
 
 
+async def drop_table(table: str) -> None:
+    """Очищает таблицу"""
+    try:
+        query = f'DROP TABLE {table};'
+
+        cursor.execute(query)
+        db.commit()
+        print(f'Таблица {table} удалена.')
+    except sqlite3.Error as e:
+        print('Ошибка при удалении таблицы:', e)
+
+
 def query_database(table: str, columns: tuple[str, ...], condition=None, group_by=None, order_by=None):
     """Осуществляет запрос к базе данных"""
     try:
@@ -77,9 +89,7 @@ def _init_db() -> None:
 
 def check_db_exists() -> None:
     """Проверяет, инициализирована ли БД, если нет — инициализирует"""
-    cursor.execute('SELECT name FROM sqlite_master '
-                   'WHERE type="table" AND name="users";')
-    table_exists = cursor.fetchall()
+    table_exists = query_database(table='sqlite_master', columns=('name',), condition='type="table" AND name="users"')
     if table_exists:
         return
     _init_db()

@@ -1,38 +1,10 @@
-import uuid
 from tabulate import tabulate
 
 from aiogram.exceptions import TelegramBadRequest
-from aiogram.fsm.context import FSMContext
-from aiogram.types import Message, CallbackQuery
+from aiogram.types import Message
 
 from bot import bot
-from keyboards.inline_keyboard import create_inline_kb
-from lexicon import lexicon
-from db_interface import insert, query_database
-
-
-# Функция генерации ключа доступа к базе задач
-def get_access(unit: str) -> str | None:
-    code = None
-    match unit:
-        case 'manager':
-            code = uuid.uuid4().hex
-        case 'master':
-            code = uuid.uuid4().hex
-        case 'staff':
-            code = uuid.uuid4().hex
-    return code
-
-
-# Функция забирает данные из Redis и передает их в БД
-async def to_user_database(callback: CallbackQuery, state: FSMContext, code: str):
-    await callback.message.edit_text(text=f'{lexicon["your_code_is"]}\n`{code}`', parse_mode='MarkdownV2')
-    await state.update_data(role=lexicon[callback.data])
-    await state.update_data(code=code)
-    insert(table='users', data_dict=await state.get_data())
-    await state.clear()
-    markup = create_inline_kb('register', 'sign_in')
-    await callback.message.answer(text=lexicon['final_reg'], reply_markup=markup)
+from db_interface import query_database
 
 
 async def multi_delete(message: Message, count: int = 1):

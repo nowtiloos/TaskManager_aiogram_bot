@@ -1,3 +1,5 @@
+import uuid
+
 from aiogram import Router, F
 from aiogram.filters import Command, CommandStart, StateFilter
 from aiogram.fsm.context import FSMContext
@@ -7,8 +9,8 @@ from aiogram.types import Message, CallbackQuery
 from keyboards.inline_keyboard import keyboard, create_inline_kb
 from lexicon import lexicon
 from fsm import FSMRegistration, FSMEntry
-from services.db_interface import update_auth
-from services.services import get_access, to_user_database, multi_delete
+from services.db_interface import update_auth, insert
+from services.services import multi_delete
 from filters import ValidatorCode, ValidatorName
 
 # Инициализируем роутер уровня модуля
@@ -72,11 +74,17 @@ async def invalid_name(message: Message):
              'отправьте команду /cancel')
 
 
+# собирает оставшиеся данные и отправляет в БД
 @router.callback_query(StateFilter(FSMRegistration.fill_role))
 async def process_get_role(callback: CallbackQuery, state: FSMContext):
-    code = get_access(callback.data)
-    # Передает данные в БД
-    await to_user_database(callback, state, code)
+    code = uuid.uuid4().hex  # генерируем код доступа
+    await callback.message.edit_text(text=f'{lexicon["your_code_is"]}\n`{code}`', parse_mode='MarkdownV2')
+    await state.update_data(role=lexicon[callback.data])
+    await state.update_data(code=code)
+    insert(table='users', data_dict=await state.get_data())
+    await state.clear()
+    markup = create_inline_kb('register', 'sign_in')
+    await callback.message.answer(text=lexicon['final_reg'], reply_markup=markup)
 
 
 # ------------Ветка входа----------------
