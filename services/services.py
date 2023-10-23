@@ -19,7 +19,7 @@ async def multi_delete(message: Message, count: int = 1):
 
 
 def get_table():
-    query = query_database(table='tasks', columns=('task_id', 'task_text'))
-    headers = ['id', 'text']
-    table = tabulate(query, headers, tablefmt='grid')
+    query = query_database(table="tasks", columns=("task_id", "task_text"))
+    headers = ["id", "text"]
+    table = tabulate(query, headers, tablefmt="grid")
     return table

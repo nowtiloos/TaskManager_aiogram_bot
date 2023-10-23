@@ -9,25 +9,25 @@ router = Router()
 router.message.filter(IsAdmin())
 
 
-@router.message(Command(commands='clear_users'))
+@router.message(Command(commands="clear_users"))
 async def process_clear_users_table(message: Message):
-    await message.answer(text='Users table clear')
-    await clear_table(table='users')
+    await message.answer(text="Users table clear")
+    await clear_table(table="users")
 
 
-@router.message(Command(commands='clear_tasks'))
+@router.message(Command(commands="clear_tasks"))
 async def process_clear_tasks_table(message: Message):
-    await message.answer(text='Users table clear')
-    await clear_table(table='tasks')
+    await message.answer(text="Users table clear")
+    await clear_table(table="tasks")
 
 
-@router.message(Command(commands='drop_users'))
+@router.message(Command(commands="drop_users"))
 async def process_clear_tasks_table(message: Message):
-    await message.answer(text='Users table has been dropped')
-    await drop_table(table='users')
+    await message.answer(text="Users table has been dropped")
+    await drop_table(table="users")
 
 
-@router.message(Command(commands='drop_tasks'))
+@router.message(Command(commands="drop_tasks"))
 async def process_clear_tasks_table(message: Message):
-    await message.answer(text='Tasks table has been dropped')
-    await drop_table(table='tasks')
+    await message.answer(text="Tasks table has been dropped")
+    await drop_table(table="tasks")

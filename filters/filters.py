@@ -16,7 +16,7 @@ class IsAdmin(BaseFilter):
 class ValidatorCode(BaseFilter):
     async def __call__(self, message: Message) -> bool:
         # запрос к базе данных на предоставление всех code
-        query: list = query_database(table='users', columns=('code',))
+        query: list = query_database(table="users", columns=("code",))
         # представление в виде списка
         rows: list[str] = [arg for rows in query for arg in rows]
         return message.text in rows
@@ -26,7 +26,9 @@ class Authorized(BaseFilter):
     async def __call__(self, message: Message) -> bool | None:
         tg_id = message.from_user.id
         # запрос значения auth по tg_id
-        query: list = query_database(table='users', columns=('auth',), condition=f'tg_id = {tg_id}')
+        query: list = query_database(
+            table="users", columns=("auth",), condition=f"tg_id = {tg_id}"
+        )
         # распаковка значения поля auth
         if query:
             result, *_ = [arg for rows in query for arg in rows]
@@ -35,6 +37,6 @@ class Authorized(BaseFilter):
 
 class ValidatorName(BaseFilter):
     async def __call__(self, message: Message) -> bool:
-        pattern = r'^[А-ЯЁ][а-яё]+\s[А-ЯЁ]\.[А-ЯЁ]\.$'
+        pattern = r"^[А-ЯЁ][а-яё]+\s[А-ЯЁ]\.[А-ЯЁ]\.$"
         match = re.match(pattern, message.text)
         return bool(match)

@@ -19,11 +19,10 @@ def load_config(path: str | None) -> Config:
 
     return Config(
         tg_bot=TgBot(
-            token=env('BOT_TOKEN'),
-            admin_ids=list(map(int, env.list('ADMIN_IDS')))
+            token=env("BOT_TOKEN"), admin_ids=list(map(int, env.list("ADMIN_IDS")))
         )
     )
 
 
 # Загружаем конфиг
-config = load_config('.env')
+config = load_config(".env")
